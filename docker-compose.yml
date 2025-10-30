@@ -1,16 +1,63 @@
 services:
   rabbitmq:
     image: rabbitmq:3-management
-    ports:
-      - "5672:5672"     # RabbitMQ AMQP port
-      - "15672:15672"   # Web management UI
-    container_name: rabbitmq
-  postgres:
-    image: postgres:14
+    volumes:
+      - ./rabbitmq_data:/var/lib/rabbitmq # Persist data
     environment:
-      - POSTGRES_PASSWORD=${DB_PASS}
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_DB=${DB_NAME}
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
     ports:
-      - "5432:5432"
+      - "5672:5672" # Standard AMQP port
+      - "15672:15672" # RabbitMQ Management UI port
+    container_name: rabbitmq
+
+  postgres:
+    image: postgres:17-alpine
+    restart: always
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - 5432:5432
     container_name: postgres
+
+  # auth-service:
+  #   build: ./auth-service
+  #   container_name: auth-service
+  #   ports:
+  #     - "8080:8080"
+  #   environment:
+  #     - DB_HOST=postgres
+  #     - DB_PORT=5432
+  #     - DB_USER=${DB_USER}
+  #     - DB_PASS=${DB_PASS}
+  #     - DB_NAME=${DB_NAME}
+  #     - RABBITMQ_HOST=rabbitmq
+  #     - RABBITMQ_PORT=5672
+  #   depends_on:
+  #     - postgres
+  #     - rabbitmq
+  #   networks:
+  #     - app-network
+
+  # email-service:
+  #   build: ./email-service
+  #   container_name: email-service
+  #   depends_on:
+  #     - rabbitmq
+  #   environment:
+  #     - RABBITMQ_HOST=rabbitmq
+  #     - RABBITMQ_PORT=5672
+  #   networks:
+  #     - app-network
+
+volumes:
+  postgres-data:
+  rabbitmq_data:
+
+# networks:
+#   app-network:
+#     driver: bridge
