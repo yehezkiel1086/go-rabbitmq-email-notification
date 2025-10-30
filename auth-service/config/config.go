@@ -12,6 +12,7 @@ type (
 		App  *App
 		HTTP *HTTP
 		DB *DB
+		Rabbitmq *Rabbitmq
 	}
 
 	App struct {
@@ -30,6 +31,13 @@ type (
 		User     string
 		Password string
 		DBName   string
+	}
+
+	Rabbitmq struct {
+		User string
+		Pass string
+		Host string
+		Port string
 	}
 )
 
@@ -59,9 +67,17 @@ func InitConfig() (*Container, error) {
 		DBName:   os.Getenv("DB_NAME"),
 	}
 
+	Rabbitmq := &Rabbitmq{
+		User: os.Getenv("RABBITMQ_USER"),
+		Pass: os.Getenv("RABBITMQ_PASS"),
+		Host: os.Getenv("RABBITMQ_HOST"),
+		Port: os.Getenv("RABBITMQ_PORT"),
+	}
+
 	return &Container{
 		App: App,
 		HTTP: HTTP,
 		DB: DB,
+		Rabbitmq: Rabbitmq,
 	}, nil
 }

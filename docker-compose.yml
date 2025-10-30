@@ -4,10 +4,10 @@ services:
     volumes:
       - ./rabbitmq_data:/var/lib/rabbitmq # Persist data
     environment:
-      RABBITMQ_DEFAULT_USER: user
-      RABBITMQ_DEFAULT_PASS: password
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
     ports:
-      - "5672:5672" # Standard AMQP port
+      - "${RABBITMQ_PORT}:5672" # Standard AMQP port
       - "15672:15672" # RabbitMQ Management UI port
     container_name: rabbitmq
 
@@ -21,7 +21,7 @@ services:
       POSTGRES_PASSWORD: ${DB_PASS}
       POSTGRES_DB: ${DB_NAME}
     ports:
-      - 5432:5432
+      - ${DB_PORT}:5432
     container_name: postgres
 
   # auth-service:

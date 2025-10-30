@@ -38,7 +38,7 @@ func main() {
 	fmt.Println("✅ Database migrated successfully")
 
 	// init rabbitmq
-	mq, err := rabbitmq.InitRabbitMQ()
+	mq, err := rabbitmq.InitRabbitMQ(conf.Rabbitmq)
 	if err != nil {
 		log.Fatalf("Failed to connect to RabbitMQ: %v", err)
 	}
