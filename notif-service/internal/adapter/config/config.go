@@ -45,8 +45,8 @@ func New() (*Container, error) {
 	}
 
 	AMQP := &AMQP{
-		Host: os.Getenv("AMQP_HOST"),
-		Port: os.Getenv("AMQP_PORT"),
+		Host: os.Getenv("NOTIF_AMQP_HOST"),
+		Port: os.Getenv("NOTIF_AMQP_PORT"),
 	}
 
 	Rabbitmq := &RabbitMQ{

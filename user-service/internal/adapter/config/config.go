@@ -11,6 +11,7 @@ type (
 	Container struct {
 		App  *App
 		HTTP *HTTP
+		RabbitMQ *RabbitMQ
 		DB   *DB
 		JWT  *JWT
 	}
@@ -23,6 +24,13 @@ type (
 	HTTP struct {
 		Host           string
 		Port           string
+	}
+
+	RabbitMQ struct {
+		Host     string
+		Port     string
+		User string
+		Password string
 	}
 
 	DB struct {
@@ -54,8 +62,15 @@ func New() (*Container, error) {
 	}
 
 	HTTP := &HTTP{
-		Host:           os.Getenv("USER_HOST"),
-		Port:           os.Getenv("USER_PORT"),
+		Host:           os.Getenv("USER_HTTP_HOST"),
+		Port:           os.Getenv("USER_HTTP_PORT"),
+	}
+
+	Rabbitmq := &RabbitMQ{
+		Host:     os.Getenv("RABBITMQ_HOST"),
+		Port:     os.Getenv("RABBITMQ_PORT"),
+		User: os.Getenv("RABBITMQ_USER"),
+		Password: os.Getenv("RABBITMQ_PASSWORD"),
 	}
 
 	DB := &DB{
@@ -74,6 +89,7 @@ func New() (*Container, error) {
 	return &Container{
 		App:  App,
 		HTTP: HTTP,
+		RabbitMQ: Rabbitmq,
 		DB:   DB,
 		JWT:  JWT,
 	}, nil

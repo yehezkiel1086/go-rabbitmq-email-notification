@@ -11,7 +11,6 @@ type NotifHandler struct {
 	svc port.NotifService
 }
 
-
 func NewNotifHandler(svc port.NotifService) *NotifHandler {
 	return &NotifHandler{
 		svc: svc,
