@@ -11,6 +11,7 @@ type (
 		App      *App
 		AMQP *AMQP
 		RabbitMQ *RabbitMQ
+		GMAIL *GMAIL
 	}
 
 	App struct {
@@ -27,6 +28,11 @@ type (
 		Host     string
 		Port     string
 		User string
+		Password string
+	}
+
+	GMAIL struct {
+		SenderEmail string
 		Password string
 	}
 )
@@ -56,9 +62,15 @@ func New() (*Container, error) {
 		Password: os.Getenv("RABBITMQ_PASSWORD"),
 	}
 
+	GMAIL := &GMAIL{
+		SenderEmail: os.Getenv("GMAIL_SENDER_EMAIL"),
+		Password: os.Getenv("GMAIL_APP_PASSWORD"),
+	}
+
 	return &Container{
 		App:      App,
 		AMQP: AMQP,
 		RabbitMQ: Rabbitmq,
+		GMAIL: GMAIL,
 	}, nil
 }

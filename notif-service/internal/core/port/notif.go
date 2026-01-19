@@ -12,4 +12,5 @@ type NotifRepository interface {
 
 type NotifService interface {
 	ReceiveNotif(ctx context.Context) (<-chan amqp.Delivery, error)
+	SendConfirmationEmail(ctx context.Context, msg []byte) error
 }

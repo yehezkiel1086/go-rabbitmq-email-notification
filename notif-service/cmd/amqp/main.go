@@ -39,7 +39,7 @@ func main() {
 	notifRepo, err := repository.NewNotifRepository(mq)
 	handleError(err, "unable to create queue")
 
-	notifSvc := service.NewNotifService(notifRepo)
+	notifSvc := service.NewNotifService(notifRepo, conf.GMAIL)
 	notifHandler := handler.NewNotifHandler(notifSvc)
 
 	// receive notification

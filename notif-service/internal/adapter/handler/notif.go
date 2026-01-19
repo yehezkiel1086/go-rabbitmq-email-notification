@@ -26,8 +26,11 @@ func (h *NotifHandler) ReceiveNotif(ctx context.Context) {
 	var forever chan struct{}
 
 	go func() {
-		for d := range msgs {
-			log.Printf("Received a message: %s", d.Body)
+		for msg := range msgs {
+			if err := h.svc.SendConfirmationEmail(ctx, msg.Body); err != nil {
+				log.Fatalf("failed to send email: %v", err)
+				return
+			}
 		}
 	}()
 	
