@@ -51,3 +51,24 @@ func (ur *UserRepository) GetUsers(ctx context.Context) ([]domain.UserResponse, 
 
 	return users, nil
 }
+
+func (ur *UserRepository) GetUserByToken(ctx context.Context, token string) (*domain.User, error) {
+	db := ur.db.GetDB()
+
+	var user *domain.User
+	if err := db.Where("confirmation_token = ?", token).First(&user).Error; err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (ur *UserRepository) UpdateUser(ctx context.Context, user *domain.User) (*domain.User, error) {
+	db := ur.db.GetDB()
+
+	if err := db.Save(user).Error; err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}

@@ -42,6 +42,28 @@ func (uh *UserHandler) RegisterUser(c *gin.Context) {
 	})
 }
 
+func (uh *UserHandler) ConfirmEmail(c *gin.Context) {
+	token := c.Query("token")
+	if token == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "token is required",
+		})
+		return
+	}
+
+	_, err := uh.svc.ConfirmEmail(c.Request.Context(), token)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid token",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "email confirmed",
+	})
+}
+
 func (uh *UserHandler) GetUsers(c *gin.Context) {
 	users, err := uh.svc.GetUsers(c.Request.Context())
 	if err != nil {

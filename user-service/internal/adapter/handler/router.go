@@ -26,6 +26,7 @@ func NewRouter(
 	// public user and auth routes
 	pb.POST("/login", authHandler.Login)
 	pb.POST("/register", userHandler.RegisterUser)
+	pb.GET("/confirm-email", userHandler.ConfirmEmail)
 
 	// admin user routes
 	ad.GET("/users", userHandler.GetUsers)

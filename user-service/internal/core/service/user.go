@@ -69,6 +69,22 @@ func (us *UserService) RegisterUser(ctx context.Context, user *domain.User) (*do
 	return createdUser, nil
 }
 
+func (us *UserService) ConfirmEmail(ctx context.Context, token string) (*domain.User, error) {
+	user, err := us.repo.GetUserByToken(ctx, token)
+	if err != nil {
+		return nil, err
+	}
+
+	user.IsVerified = true
+	user.ConfirmationToken = ""
+
+	if _, err := us.repo.UpdateUser(ctx, user); err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
 func (us *UserService) GetUsers(ctx context.Context) ([]domain.UserResponse, error) {
 	return us.repo.GetUsers(ctx)
 }
