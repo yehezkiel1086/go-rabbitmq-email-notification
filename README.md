@@ -1,15 +1,15 @@
-# Go Gin, RabbitMQ & PostgreSQL: Microservice Notification System
+# Go Gin, RabbitMQ & PostgreSQL: User Registration & Email Notification
 
-This project is a sample implementation of a microservice architecture using Go. It demonstrates how to handle a user registration process where a RESTful API service communicates with a background worker service via a message queue (RabbitMQ) to send a welcome email notification.
+This project is a sample implementation of a microservice architecture using Go. It demonstrates how to handle a user registration process, JWT authentication, and asynchronous email confirmation where a RESTful API service communicates with a background worker service via a message queue (RabbitMQ).
 
 ## Architecture Overview
 
 The system consists of two main services, a database, and a message broker, all orchestrated using Docker.
 
-1.  **Auth Service**: A REST API built with the Gin framework. It exposes an endpoint for user registration. When a new user registers, it saves the user's data to the PostgreSQL database and publishes a `user_registered` event to a RabbitMQ queue.
-2.  **Email Service**: A background worker that listens for messages on the `user_registered` RabbitMQ queue. When it receives a message, it processes it and simulates sending a welcome email to the newly registered user.
+1.  **User Service**: A REST API built with the Gin framework. It handles user registration, login, and profile management. When a new user registers, it generates a confirmation token, saves the user, and publishes a message to the `email_confirm` queue.
+2.  **Notification Service**: A background worker that listens for messages on the `email_confirm` RabbitMQ queue. When it receives a message, it sends an email with a confirmation link using Gmail SMTP.
 3.  **PostgreSQL**: A relational database used to store user information.
-4.  **RabbitMQ**: A message broker that facilitates asynchronous communication between the `Auth Service` and the `Email Service`, decoupling the services from each other.
+4.  **RabbitMQ**: A message broker that facilitates asynchronous communication between the services.
 
 ### Data Flow
 
@@ -17,19 +17,20 @@ The system consists of two main services, a database, and a message broker, all 
 1. Client sends a POST request to /api/v1/register
       |
       v
-2. Auth Service (Gin API)
+2. User Service (Gin API)
    - Validates the request
+   - Hashes password & generates token
    - Saves user data to PostgreSQL
-   - Publishes a message to RabbitMQ
+   - Publishes a message to 'email_confirm' queue
       |
       v
 3. RabbitMQ (Message Queue)
-   - Holds the 'user_registered' message
+   - Holds the message
       |
       v
-4. Email Service (Consumer)
+4. Notification Service (Consumer)
    - Receives the message
-   - Simulates sending a welcome email
+   - Sends confirmation email via SMTP
 ```
 
 ## Technologies Used
@@ -112,9 +113,8 @@ Use a tool like `curl` or Postman to send a `POST` request to the registration e
 
 ```bash
 curl -X POST http://localhost:8080/api/v1/register \
--H "Content-Type: application/json" \
--d '{
     "email": "test@example.com",
+    "password": "password123",
     "name": "Test User"
 }'
 ```
